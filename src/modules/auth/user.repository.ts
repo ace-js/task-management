@@ -1,8 +1,11 @@
 import { EntityRepository, Repository } from 'typeorm';
+import {
+  ConflictException,
+  InternalServerErrorException
+} from '@nestjs/common';
+
 import { User } from './user.entity';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { BadRequestException, ConflictException, InternalServerErrorException } from '@nestjs/common';
-import { Crypto } from '../../core/lib/crypto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -23,14 +26,14 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<User | null> {
     const { username, password } = authCredentialsDto;
 
     const user = await this.findOne({ username });
 
     if(!user || ! await user.validatePassword(password))
-      throw new BadRequestException();
+      return null;
 
-    return username
+    return user
   }
 }
