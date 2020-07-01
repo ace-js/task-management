@@ -2,7 +2,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export const typeOrmSqlConfig: TypeOrmModuleOptions = {
   type: 'sqlite',
-  database: __dirname + '/../../db.sqlite',
+  database: 'taskmanagement',
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: true
 };
