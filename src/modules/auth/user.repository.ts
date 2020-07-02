@@ -19,7 +19,7 @@ export class UserRepository extends Repository<User> {
     try {
       await user.save();
     } catch (e) {
-      if (e.errno === 19) { // duplicate username
+      if (e.code === '23505') { // duplicate username
         throw new ConflictException('Username already exists');
       }
       throw new InternalServerErrorException();

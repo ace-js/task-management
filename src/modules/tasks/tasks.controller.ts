@@ -42,7 +42,7 @@ export class TasksController {
     @Query() filterDto: GetTaskFilterDto,
     @GetUser() user: User,
   ): Promise<Array<Task>> {
-    this.logger.verbose(`User "${user.username}" retrieving all tasks. Filters: ${JSON.stringify(filterDto)}`)
+    this.logger.verbose(`User "${user.id}" retrieving all tasks. Filters: ${JSON.stringify(filterDto)}`)
     return this.tasksService.getTasks(filterDto, user.id);
   }
 
@@ -60,6 +60,7 @@ export class TasksController {
     @GetUser() user: User,
     @Body() createTaskDto: CreateTaskDto,
   ): Promise<Task> {
+    this.logger.verbose(`User "${user.id}" creating a task. Data: ${JSON.stringify(createTaskDto)}`)
     return this.tasksService.createTask(createTaskDto, user.id);
   }
 
