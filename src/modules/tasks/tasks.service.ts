@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 import { TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -13,12 +13,12 @@ export class TasksService {
   constructor(@InjectRepository(TaskRepository) private taskRepository: TaskRepository) {
   }
 
-  async getTasks(filterDto: GetTaskFilterDto): Promise<Array<Task>> {
-    return this.taskRepository.getTasks(filterDto);
+  async getTasks(filterDto: GetTaskFilterDto, userId: number): Promise<Array<Task>> {
+    return this.taskRepository.getTasks(filterDto, userId);
   }
 
-  async getTaskById(id: number): Promise<Task> {
-    const task = await this.taskRepository.findOne(id);
+  async getTaskById(id: number, userId: number): Promise<Task> {
+    const task = await this.taskRepository.findOne({ where: { id, userId }});
 
     if (!task)
       throw new NotFoundException();
@@ -31,9 +31,9 @@ export class TasksService {
   }
 
 
-  async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
+  async updateTaskStatus(id: number, status: TaskStatus, userId: number): Promise<Task> {
     try {
-      const task = await this.getTaskById(id);
+      const task = await this.getTaskById(id, userId);
       task.status = status;
       await task.save();
       return task;
@@ -42,9 +42,9 @@ export class TasksService {
     }
   }
 
-  async deleteTask(id: number): Promise<void> {
+  async deleteTask(id: number, userId: number): Promise<void> {
     try {
-      const task = await this.getTaskById(id);
+      const task = await this.getTaskById(id, userId);
       await task.remove();
     } catch (e) {
       throw  new BadRequestException(`No task to delete with an ID of "${id}"`);
