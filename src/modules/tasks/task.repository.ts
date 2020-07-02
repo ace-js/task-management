@@ -9,7 +9,6 @@ import { GetTaskFilterDto } from './dto/get-task-filter.dto';
 @EntityRepository(Task)
 export class TaskRepository extends Repository<Task> {
   private readonly logger: Logger;
-
   constructor() {
     super();
     this.logger = new Logger('TaskRepository');
